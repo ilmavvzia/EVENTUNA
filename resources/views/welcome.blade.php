@@ -1,197 +1,147 @@
 @extends('layouts.app')
 
-@section('title', 'EVENTUNA - Portal Event & Manajemen SKP Mahasiswa')
+@section('title', 'EVENTUNA - Portal Event & Lomba Mahasiswa')
 
 @section('content')
-<div class="min-h-screen bg-slate-50 flex flex-col font-sans">
+<!-- Hero Banner & Akses Profil Ormawa -->
+<div class="bg-gradient-to-br from-[#1e1b4b] via-indigo-950 to-purple-900 text-white py-12 px-4">
+    <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+        <div class="max-w-2xl space-y-3">
+            <span class="inline-block text-xs font-semibold tracking-wider uppercase bg-purple-500/30 text-purple-200 px-3 py-1 rounded-full">
+                Portal Informasi Kegiatan & SKP Mahasiswa
+            </span>
+            <h1 class="text-3xl md:text-4xl font-bold leading-tight">
+                Temukan Seminar, Lomba, & Pelatihan Kampus Terbaru
+            </h1>
+            <p class="text-sm md:text-base text-purple-200">
+                Jelajahi berbagai event resmi dari BEM, HIMA, dan UKM tanpa perlu login. Pengurus Ormawa dapat mendaftarkan profil organisasinya untuk mempublikasikan event.
+            </p>
+        </div>
 
-    <!-- HERO & NAVBAR WRAPPER (Gradien Ungu Gelap) -->
-    <div class="bg-gradient-to-b from-[#180a3a] via-[#1e1045] to-[#2a135f] text-white">
-
-        <!-- NAVBAR -->
-        <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-wrap justify-between items-center gap-4 border-b border-white/10">
-            <div class="flex items-center gap-3">
-                <a href="{{ url('/') }}" class="text-2xl font-extrabold tracking-wide text-white hover:text-purple-200 transition">
-                    EVENTUNA
-                </a>
-                <span class="bg-purple-800/80 text-purple-200 text-xs px-3 py-1 rounded-full font-medium border border-purple-500/30">
-                    Pengurus Ormawa
-                </span>
-            </div>
-
-            <div class="flex flex-wrap items-center gap-4 sm:gap-6 text-sm">
-                <a href="{{ url('/') }}" class="text-white font-semibold">Beranda Event</a>
-                <span class="text-white/30 hidden sm:inline">|</span>
-                <a href="{{ url('/dashboard') }}" class="text-purple-200 hover:text-white transition">Dashboard Ormawa</a>
-                <span class="text-white/30 hidden sm:inline">|</span>
-                <a href="{{ route('admin.dashboard') }}" class="text-purple-300 hover:text-white transition text-xs border border-purple-400/30 px-2.5 py-1 rounded-lg">
-                    Panel Admin &rarr;
-                </a>
-                <a href="{{ url('/login') }}" class="bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs px-4 py-2 rounded-xl shadow-md transition">
-                    Masuk
-                </a>
-            </div>
-        </nav>
-
-        <!-- HERO SECTION -->
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-                
-                <!-- Sisi Kiri: Judul & Keterangan -->
-                <div class="lg:col-span-8 space-y-4">
-                    <span class="inline-block bg-purple-900/60 text-purple-200 text-xs font-bold uppercase tracking-wider px-3.5 py-1 rounded-full border border-purple-500/40">
-                        Portal Informasi Kegiatan & SKP Mahasiswa
-                    </span>
-                    <h1 class="text-3xl sm:text-5xl font-extrabold text-white leading-tight">
-                        Temukan Seminar, Lomba, & Pelatihan Kampus Terbaru
-                    </h1>
-                    <p class="text-purple-200 text-sm sm:text-base leading-relaxed max-w-2xl">
-                        Jelajahi berbagai event resmi dari BEM, HIMA, dan UKM tanpa perlu login. Pengurus Ormawa dapat mendaftarkan profil organisasinya untuk mempublikasikan event.
-                    </p>
+        <!-- Kartu Profil / Akses Ormawa -->
+        <div class="bg-white/10 backdrop-blur-md border border-white/20 p-5 rounded-2xl w-full md:w-80 space-y-3">
+            @guest
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-purple-400/30 flex items-center justify-center font-bold text-purple-100">
+                        👤
+                    </div>
+                    <div>
+                        <div class="text-sm font-bold text-white">Profil Pengurus Ormawa</div>
+                        <div class="text-xs text-purple-200">Ingin memposting event / lomba?</div>
+                    </div>
                 </div>
-
-                <!-- Sisi Kanan: Panel Profil Singkat Ormawa -->
-                <div class="lg:col-span-4">
-                    <div class="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/10 text-center space-y-4 shadow-xl">
-                        <div class="space-y-1">
-                            <p class="text-xs text-purple-300">Pusat Ormawa:</p>
-                            <h3 class="font-bold text-white text-base">Portal Penyelenggara Kegiatan</h3>
-                            <p class="text-xs text-purple-200">Universitas Airlangga</p>
-                        </div>
-                        <a href="{{ url('/login') }}"
-                           class="block w-full py-3 px-4 bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white font-bold text-sm rounded-xl shadow-lg transition">
+                <div class="grid grid-cols-2 gap-2 pt-1">
+                    <a href="{{ route('login') }}"
+                       class="text-center py-2 px-3 bg-white text-indigo-950 text-xs font-bold rounded-xl hover:bg-purple-50 transition">
+                        Masuk Akun
+                    </a>
+                    <a href="{{ route('register.ormawa') }}"
+                       class="text-center py-2 px-3 bg-purple-600 text-white text-xs font-bold rounded-xl hover:bg-purple-500 transition">
+                        Daftar Ormawa
+                    </a>
+                </div>
+            @else
+                <div class="text-xs text-purple-200">Masuk sebagai:</div>
+                <div class="text-sm font-bold text-white">{{ auth()->user()->name }}</div>
+                <div class="pt-1">
+                    @if(auth()->user()->hasRole('admin'))
+                        <a href="{{ route('admin.kategori.index') }}"
+                           class="block text-center py-2 px-4 bg-white text-indigo-950 text-xs font-bold rounded-xl">
+                            Buka Panel Admin
+                        </a>
+                    @else
+                        <a href="{{ route('events.create') }}"
+                           class="block text-center py-2 px-4 bg-purple-500 hover:bg-purple-400 text-white text-xs font-bold rounded-xl">
                             + Posting Event Baru
                         </a>
+                    @endif
+                </div>
+            @endguest
+        </div>
+    </div>
+</div>
+
+<!-- Filter & Katalog Event -->
+<div class="max-w-6xl mx-auto px-4 py-8">
+    <form method="GET" action="{{ route('home') }}" class="flex flex-col sm:flex-row gap-3 mb-8">
+        <input type="text" name="search" value="{{ $search ?? '' }}"
+               placeholder="Cari judul seminar, lomba, atau lokasi..."
+               class="flex-1 px-4 py-2.5 text-sm border border-slate-300 rounded-xl bg-white focus:ring-2 focus:ring-purple-600 focus:outline-none">
+
+        <select name="kategori" class="sm:w-56 px-3.5 py-2.5 text-sm border border-slate-300 rounded-xl bg-white">
+            <option value="">Semua Kategori</option>
+            @foreach($kategoris as $kat)
+                <option value="{{ $kat->id }}" @selected(($kategoriId ?? '') == $kat->id)>
+                    {{ $kat->nama_kategori }}
+                </option>
+            @endforeach
+        </select>
+
+        <button type="submit" class="px-5 py-2.5 bg-indigo-950 text-white text-sm font-semibold rounded-xl hover:bg-indigo-900">
+            Filter Event
+        </button>
+    </form>
+
+    <!-- Grid Kartu Event -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        @forelse($events as $event)
+            <div class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden flex flex-col justify-between hover:shadow-md transition">
+                <div>
+                    @if($event->poster_path)
+                        <img src="{{ asset('storage/' . $event->poster_path) }}" alt="{{ $event->judul_event }}"
+                             class="w-full h-44 object-cover">
+                    @else
+                        <div class="w-full h-44 bg-gradient-to-r from-indigo-100 to-purple-100 flex items-center justify-center text-indigo-400 text-xs font-semibold">
+                            Poster Event {{ $event->user->name ?? 'Ormawa' }}
+                        </div>
+                    @endif
+
+                    <div class="p-5 space-y-2.5">
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold text-white"
+                                  style="background-color: {{ $event->kategori->warna_badge ?? '#4f46e5' }}">
+                                {{ $event->kategori->nama_kategori ?? 'Umum' }}
+                            </span>
+                            <span class="text-xs font-semibold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded">
+                                +{{ $event->benefitSkp->bobot_poin ?? 0 }} SKP
+                            </span>
+                        </div>
+
+                        <h2 class="text-base font-bold text-slate-900 line-clamp-2">
+                            {{ $event->judul_event }}
+                        </h2>
+
+                        <p class="text-xs text-slate-500">
+                            Penyelenggara: <span class="font-semibold text-slate-700">{{ $event->user->name ?? '-' }}</span>
+                        </p>
+
+                        <div class="text-xs text-slate-600 space-y-1 pt-1">
+                            <div>📅 {{ \Carbon\Carbon::parse($event->tanggal_mulai)->format('d M Y') }}</div>
+                            <div>📍 {{ $event->lokasi_atau_platform }}</div>
+                        </div>
                     </div>
                 </div>
 
+                <div class="px-5 py-3.5 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
+                    <a href="{{ route('events.public.show', $event->slug) }}"
+                       class="text-xs font-bold text-purple-700 hover:text-purple-900">
+                        Lihat Detail & Rundown →
+                    </a>
+                    <a href="{{ $event->link_pendaftaran }}" target="_blank"
+                       class="px-3 py-1.5 bg-purple-700 text-white text-xs font-semibold rounded-lg hover:bg-purple-800">
+                        Daftar
+                    </a>
+                </div>
             </div>
-        </div>
-
+        @empty
+            <div class="col-span-full bg-white border border-slate-200 rounded-2xl p-10 text-center text-slate-400 text-sm">
+                Belum ada event yang dipublikasikan. Silakan masuk sebagai Ormawa untuk memposting event pertama!
+            </div>
+        @endforelse
     </div>
 
-    <!-- MAIN BODY: FILTER & KATALOG EVENT -->
-    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 -mt-6 sm:-mt-8 space-y-8 pb-16">
-
-        <!-- Search & Filter Bar -->
-        <div class="bg-white rounded-2xl shadow-md border border-slate-200 p-4">
-            <form action="{{ url('/') }}" method="GET" class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-center">
-                
-                <!-- Input Search -->
-                <div class="sm:col-span-6 relative">
-                    <input type="text"
-                           name="search"
-                           value="{{ request('search') }}"
-                           placeholder="Cari judul seminar, lomba, atau lokasi..."
-                           class="w-full pl-10 pr-4 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-purple-600">
-                    <svg class="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                    </svg>
-                </div>
-
-                <!-- Dropdown Kategori -->
-                <div class="sm:col-span-4">
-                    <select name="kategori" class="w-full px-4 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-purple-600 bg-white">
-                        <option value="">Semua Kategori</option>
-                        @foreach($kategoris as $kat)
-                            <option value="{{ $kat->id }}" {{ request('kategori') == $kat->id ? 'selected' : '' }}>
-                                {{ $kat->nama_kategori }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <!-- Tombol Submit -->
-                <div class="sm:col-span-2">
-                    <button type="submit" class="w-full py-2.5 px-4 bg-[#1e1b4b] hover:bg-[#2e1065] text-white font-bold text-sm rounded-xl transition shadow-sm">
-                        Filter Event
-                    </button>
-                </div>
-
-            </form>
-        </div>
-
-        <!-- Event Cards Grid -->
-        <div>
-            @if($events->count() > 0)
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    @foreach($events as $ev)
-                        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex flex-col hover:shadow-md transition">
-                            
-                            <!-- Poster / Header Image -->
-                            <div class="aspect-[16/9] bg-gradient-to-tr from-purple-900 to-indigo-800 relative flex items-center justify-center overflow-hidden">
-                                @if($ev->poster_path)
-                                    <img src="{{ asset('storage/' . $ev->poster_path) }}" alt="{{ $ev->judul_event }}" class="w-full h-full object-cover">
-                                @else
-                                    <div class="p-4 text-center text-white/70 space-y-1">
-                                        <svg class="w-8 h-8 mx-auto text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                        </svg>
-                                        <span class="text-xs font-semibold block text-white">{{ $ev->kategori->nama_kategori ?? 'Kegiatan' }}</span>
-                                    </div>
-                                @endif
-                                <span class="absolute top-3 left-3 px-2.5 py-1 rounded-full text-xs font-bold text-white shadow-sm" style="background-color: {{ $ev->kategori->warna_badge ?? '#7c3aed' }}">
-                                    {{ $ev->kategori->nama_kategori ?? 'Event' }}
-                                </span>
-                            </div>
-
-                            <!-- Content Info -->
-                            <div class="p-5 flex-1 flex flex-col justify-between space-y-4">
-                                <div class="space-y-2">
-                                    <span class="text-xs font-semibold text-indigo-600 block">
-                                        {{ $ev->benefitSkp->nama_benefit ?? 'SKP Mahasiswa' }} ({{ $ev->benefitSkp->bobot_poin ?? 0 }} Poin)
-                                    </span>
-                                    <h3 class="font-bold text-slate-900 text-base leading-snug line-clamp-2">
-                                        {{ $ev->judul_event }}
-                                    </h3>
-                                    <p class="text-xs text-slate-500 line-clamp-2 leading-relaxed">
-                                        {{ $ev->deskripsi }}
-                                    </p>
-                                </div>
-
-                                <div class="space-y-3 pt-3 border-t border-slate-100 text-xs">
-                                    <div class="flex items-center justify-between text-slate-500">
-                                        <span>📅 {{ \Carbon\Carbon::parse($ev->tanggal_mulai)->translatedFormat('d M Y') }}</span>
-                                        <span class="truncate max-w-[120px]">📍 {{ $ev->lokasi_atau_platform }}</span>
-                                    </div>
-
-                                    <div class="flex items-center justify-between">
-                                        <span class="font-semibold text-slate-700 truncate max-w-[150px]">
-                                            By {{ $ev->user->name ?? 'Ormawa' }}
-                                        </span>
-                                        <a href="{{ $ev->link_pendaftaran }}" target="_blank" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-bold text-xs transition">
-                                            Daftar &rarr;
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-                    @endforeach
-                </div>
-
-                <!-- Pagination -->
-                @if($events->hasPages())
-                    <div class="pt-6">
-                        {{ $events->links() }}
-                    </div>
-                @endif
-            @else
-                <!-- Empty State Card (Sesuai Screenshot User) -->
-                <div class="bg-white rounded-2xl border border-slate-200 p-12 text-center text-slate-500 shadow-sm max-w-3xl mx-auto">
-                    <p class="text-sm text-slate-600">
-                        Belum ada event yang dipublikasikan. Silakan masuk sebagai Ormawa untuk memposting event pertama!
-                    </p>
-                </div>
-            @endif
-        </div>
-
-    </main>
-
-    <!-- FOOTER (Sesuai Screenshot User) -->
-    <footer class="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-500">
-        &copy; 2026 EVENTUNA &mdash; Sistem Informasi Manajemen Event & SKP Mahasiswa Universitas Airlangga.
-    </footer>
-
+    <div class="mt-6">
+        {{ $events->links() }}
+    </div>
 </div>
 @endsection

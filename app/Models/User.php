@@ -2,100 +2,74 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Database\Factories\UserFactory;
-use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable([
-    'name',
-    'email',
-    'password',
-    'role',
-    'status_akun',
-    'fakultas_id',
-    'jenis_ormawa_id',
-    'deskripsi_singkat',
-    'logo_path',
-    'sk_kepengurusan_path',
-])]
-#[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
-    /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
+    protected $table = 'users';
+
+    protected $fillable = [
+        'name',
+        'email',
+        'password',
+        'role_id',
+        'status_akun',
+        'fakultas_id',
+        'jenis_ormawa_id',
+        'deskripsi_singkat',
+        'logo_path',
+        'sk_kepengurusan_path',
+    ];
+
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
     protected function casts(): array
     {
         return [
             'email_verified_at' => 'datetime',
-            'password' => 'hashed',
+            'password'          => 'hashed',
         ];
     }
 
-    /**
-     * Relasi: Satu Ormawa (User) memiliki banyak Event.
-     */
-    public function events(): HasMany
+    public function role(): BelongsTo
     {
-        return $this->hasMany(Event::class, 'user_id');
+        return $this->belongsTo(Role::class, 'role_id');
     }
 
     /**
-     * Relasi: Event yang disetujui / diproses oleh Admin ini.
+     * Helper hasRole() untuk verifikasi otorisasi RBAC (Role-Based Access Control).
+     * Menerima string tunggal atau array nama role.
      */
-    public function approvedEvents(): HasMany
+    public function hasRole(string|array $roleName): bool
     {
-        return $this->hasMany(Event::class, 'approved_by');
+        if (is_array($roleName)) {
+            return in_array($this->role?->name, $roleName, true);
+        }
+
+        return $this->role?->name === $roleName;
     }
 
-    /**
-     * Relasi: Ormawa (User) bernaung di satu Fakultas.
-     */
     public function fakultas(): BelongsTo
     {
         return $this->belongsTo(MasterFakultas::class, 'fakultas_id');
     }
 
-    /**
-     * Relasi: Ormawa (User) termasuk dalam satu Jenis Ormawa.
-     */
     public function jenisOrmawa(): BelongsTo
     {
         return $this->belongsTo(MasterJenisOrmawa::class, 'jenis_ormawa_id');
     }
 
-    /**
-     * Helper pemeriksaan role pengguna.
-     */
-    public function hasRole(string $role): bool
+    public function events(): HasMany
     {
-        return $this->role === $role;
-    }
-
-    /**
-     * Helper cek apakah pengguna adalah Super Admin Kemahasiswaan.
-     */
-    public function isAdmin(): bool
-    {
-        return $this->role === 'admin';
-    }
-
-    /**
-     * Helper cek apakah pengguna adalah Pengurus Ormawa.
-     */
-    public function isOrmawa(): bool
-    {
-        return $this->role === 'ormawa';
+        return $this->hasMany(Event::class, 'user_id');
     }
 }

@@ -4,8 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable([
     'user_id',
@@ -27,6 +29,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 ])]
 class Event extends Model
 {
+    use HasFactory;
+
     protected $table = 'events';
 
     protected function casts(): array
@@ -41,6 +45,21 @@ class Event extends Model
     /**
      * Relasi: Event diajukan oleh satu Pengurus Ormawa (User).
      */
+    protected $fillable = [
+        'user_id',
+        'kategori_id',
+        'benefit_skp_id',
+        'judul_event',
+        'slug',
+        'deskripsi',
+        'tanggal_mulai',
+        'tanggal_selesai',
+        'lokasi_atau_platform',
+        'link_pendaftaran',
+        'poster_path',
+        'status_publikasi',
+    ];
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
@@ -93,5 +112,10 @@ class Event extends Model
     {
         return $query->where('status_publikasi', 'published')
                      ->where('status_approval', 'approved');
+     * Relasi Header-Detail (T1): Satu Event memiliki banyak sesi rundown acara.
+     */
+    public function rundowns(): HasMany
+    {
+        return $this->hasMany(EventRundown::class, 'event_id');
     }
 }

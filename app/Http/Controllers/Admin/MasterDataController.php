@@ -7,100 +7,139 @@ use App\Models\MasterBenefitSkp;
 use App\Models\MasterFakultas;
 use App\Models\MasterJenisOrmawa;
 use App\Models\MasterKategoriEvent;
+use App\Models\MasterPaketEvent;
 use Illuminate\Http\Request;
 
 class MasterDataController extends Controller
 {
     public function index()
     {
-        $kategoris = MasterKategoriEvent::latest()->get();
-        $benefits = MasterBenefitSkp::latest()->get();
-        $fakultas = MasterFakultas::latest()->get();
-        $jenisOrmawas = MasterJenisOrmawa::latest()->get();
+        $pakets = MasterPaketEvent::with(['kategori', 'benefitSkp', 'fakultas', 'jenisOrmawa'])
+            ->latest()
+            ->get();
+
+        $opsiKategori = [
+            'Seminar & Talkshow'             => '#7c3aed',
+            'Webinar Nasional'               => '#2563eb',
+            'Workshop & Pelatihan'           => '#059669',
+            'Kompetisi & Lomba'              => '#dc2626',
+            'Pengabdian Masyarakat'          => '#d97706',
+            'Bazar & Festival Kampus'        => '#db2777',
+            'Musyawarah & Sidang Organisasi' => '#4f46e5',
+        ];
+
+        $opsiBenefit = [
+            'SKP + E-Sertifikat',
+            'E-Sertifikat Nasional / Internasional + SKP',
+            'E-Sertifikat Peserta (Non-SKP)',
+            'Konferensi KKN',
+            'Konferensi Skripsi',
+            'Konferensi Magang',
+        ];
+
+        $opsiFakultas = [
+            'FV'    => 'Fakultas Vokasi',
+            'FST'   => 'Fakultas Sains dan Teknologi',
+            'FEB'   => 'Fakultas Ekonomi dan Bisnis',
+            'FISIP' => 'Fakultas Ilmu Sosial dan Ilmu Politik',
+            'FK'    => 'Fakultas Kedokteran',
+            'FKG'   => 'Fakultas Kedokteran Gigi',
+            'FH'    => 'Fakultas Hukum',
+            'FF'    => 'Fakultas Farmasi',
+            'FKM'   => 'Fakultas Kesehatan Masyarakat',
+            'FPsi'  => 'Fakultas Psikologi',
+            'FIB'   => 'Fakultas Ilmu Budaya',
+            'FKp'   => 'Fakultas Keperawatan',
+            'FPK'   => 'Fakultas Perikanan dan Kelautan',
+            'FTMM'  => 'Fakultas Teknologi Maju dan Multidisiplin',
+            'FKH'   => 'Fakultas Kedokteran Hewan',
+            'FIKKIA'  => 'Fakultas Ilmu Kesehatan, Kedokteran, dan Ilmu Alam',
+            'UNIV'  => 'Tingkat Universitas',
+        ];
+
+        $opsiJenisOrmawa = ['BEM', 'HIMA', 'UKM', 'BLM', 'Ormada'];
 
         return view('admin.master-data.index', compact(
-            'kategoris',
-            'benefits',
-            'fakultas',
-            'jenisOrmawas'
+            'pakets',
+            'opsiKategori',
+            'opsiBenefit',
+            'opsiFakultas',
+            'opsiJenisOrmawa'
         ));
     }
 
-    // ================= KATEGORI EVENT =================
-    public function storeKategori(Request $request)
+    public function storePaket(Request $request)
     {
         $request->validate([
-            'nama_kategori' => 'required|string|max:50|unique:master_kategori_event,nama_kategori',
+            'nama_kegiatan' => 'required|string|max:150',
+            'nama_kategori' => 'required|string|max:50',
             'warna_badge'   => 'required|string|max:30',
+            'nama_benefit'  => 'required|string|max:100',
+            'bobot_poin'    => 'required|integer|min:0|max:100',
+            'kode_fakultas' => 'required|string|max:15',
+            'jenis_ormawa'  => 'required|string|max:30',
+            'nama_ormawa'   => 'required|string|max:100',
         ]);
 
-        MasterKategoriEvent::create($request->only('nama_kategori', 'warna_badge'));
+        $daftarFakultas = [
+            'FV'    => 'Fakultas Vokasi',
+            'FST'   => 'Fakultas Sains dan Teknologi',
+            'FEB'   => 'Fakultas Ekonomi dan Bisnis',
+            'FISIP' => 'Fakultas Ilmu Sosial dan Ilmu Politik',
+            'FK'    => 'Fakultas Kedokteran',
+            'FKG'   => 'Fakultas Kedokteran Gigi',
+            'FH'    => 'Fakultas Hukum',
+            'FF'    => 'Fakultas Farmasi',
+            'FKM'   => 'Fakultas Kesehatan Masyarakat',
+            'FPsi'  => 'Fakultas Psikologi',
+            'FIB'   => 'Fakultas Ilmu Budaya',
+            'FKp'   => 'Fakultas Keperawatan',
+            'FPK'   => 'Fakultas Perikanan dan Kelautan',
+            'FTMM'  => 'Fakultas Teknologi Maju dan Multidisiplin',
+            'FKH'   => 'Fakultas Kedokteran Hewan',
+            'FIKKIA'  => 'Fakultas Ilmu Kesehatan, Kedokteran, dan Ilmu Alam',
+            'UNIV'  => 'Tingkat Universitas',
+        ];
 
-        return back()->with('success', 'Kategori event berhasil ditambahkan.');
-    }
+        $kategori = MasterKategoriEvent::firstOrCreate(
+            ['nama_kategori' => $request->nama_kategori],
+            ['warna_badge' => $request->warna_badge]
+        );
 
-    public function updateKategori(Request $request, $id)
-    {
-        $kategori = MasterKategoriEvent::findOrFail($id);
+        $benefit = MasterBenefitSkp::firstOrCreate(
+            [
+                'nama_benefit' => $request->nama_benefit,
+                'bobot_poin'   => $request->bobot_poin,
+            ]
+        );
 
-        $request->validate([
-            'nama_kategori' => 'required|string|max:50|unique:master_kategori_event,nama_kategori,' . $kategori->id,
-            'warna_badge'   => 'required|string|max:30',
+        $fakultas = MasterFakultas::firstOrCreate(
+            ['kode_fakultas' => $request->kode_fakultas],
+            ['nama_fakultas' => $daftarFakultas[$request->kode_fakultas] ?? $request->kode_fakultas]
+        );
+
+        $labelOrmawa = $request->jenis_ormawa . ' - ' . $request->nama_ormawa;
+        $ormawa = MasterJenisOrmawa::firstOrCreate(
+            ['nama_jenis' => $labelOrmawa],
+            ['deskripsi'  => $request->nama_ormawa]
+        );
+
+        MasterPaketEvent::create([
+            'nama_kegiatan'   => $request->nama_kegiatan,
+            'kategori_id'     => $kategori->id,
+            'benefit_skp_id'  => $benefit->id,
+            'fakultas_id'     => $fakultas->id,
+            'jenis_ormawa_id' => $ormawa->id,
         ]);
 
-        $kategori->update($request->only('nama_kategori', 'warna_badge'));
-
-        return back()->with('success', 'Kategori event berhasil diperbarui.');
+        return back()->with('success', 'Data Kegiatan & Master terpadu berhasil ditambahkan!');
     }
 
-    public function destroyKategori($id)
+    public function destroyPaket($id)
     {
-        $kategori = MasterKategoriEvent::findOrFail($id);
+        $paket = MasterPaketEvent::findOrFail($id);
+        $paket->delete();
 
-        if ($kategori->events()->exists()) {
-            return back()->with('error', 'Kategori tidak dapat dihapus karena masih digunakan oleh event aktif.');
-        }
-
-        $kategori->delete();
-        return back()->with('success', 'Kategori event berhasil dihapus.');
-    }
-
-    // ================= BENEFIT SKP =================
-    public function storeBenefit(Request $request)
-    {
-        $request->validate([
-            'nama_benefit' => 'required|string|max:100',
-            'bobot_poin'   => 'required|integer|min:0|max:100',
-        ]);
-
-        MasterBenefitSkp::create($request->only('nama_benefit', 'bobot_poin'));
-
-        return back()->with('success', 'Data Benefit SKP berhasil ditambahkan.');
-    }
-
-    public function updateBenefit(Request $request, $id)
-    {
-        $benefit = MasterBenefitSkp::findOrFail($id);
-
-        $request->validate([
-            'nama_benefit' => 'required|string|max:100',
-            'bobot_poin'   => 'required|integer|min:0|max:100',
-        ]);
-
-        $benefit->update($request->only('nama_benefit', 'bobot_poin'));
-
-        return back()->with('success', 'Data Benefit SKP berhasil diperbarui.');
-    }
-
-    public function destroyBenefit($id)
-    {
-        $benefit = MasterBenefitSkp::findOrFail($id);
-
-        if ($benefit->events()->exists()) {
-            return back()->with('error', 'Benefit SKP tidak dapat dihapus karena masih digunakan pada event.');
-        }
-
-        $benefit->delete();
-        return back()->with('success', 'Data Benefit SKP berhasil dihapus.');
+        return back()->with('success', 'Data Master terpadu berhasil dihapus.');
     }
 }
