@@ -48,7 +48,15 @@ class User extends Authenticatable
      */
     public function events(): HasMany
     {
-        return $this->hasMany(Event::class);
+        return $this->hasMany(Event::class, 'user_id');
+    }
+
+    /**
+     * Relasi: Event yang disetujui / diproses oleh Admin ini.
+     */
+    public function approvedEvents(): HasMany
+    {
+        return $this->hasMany(Event::class, 'approved_by');
     }
 
     /**
@@ -65,5 +73,29 @@ class User extends Authenticatable
     public function jenisOrmawa(): BelongsTo
     {
         return $this->belongsTo(MasterJenisOrmawa::class, 'jenis_ormawa_id');
+    }
+
+    /**
+     * Helper pemeriksaan role pengguna.
+     */
+    public function hasRole(string $role): bool
+    {
+        return $this->role === $role;
+    }
+
+    /**
+     * Helper cek apakah pengguna adalah Super Admin Kemahasiswaan.
+     */
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+
+    /**
+     * Helper cek apakah pengguna adalah Pengurus Ormawa.
+     */
+    public function isOrmawa(): bool
+    {
+        return $this->role === 'ormawa';
     }
 }
