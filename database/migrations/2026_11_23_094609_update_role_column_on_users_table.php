@@ -8,12 +8,20 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            if (Schema::hasColumn('users', 'role')) {
+        if (Schema::hasColumn('users', 'role')) {
+            Schema::table('users', function (Blueprint $table) {
                 $table->dropColumn('role');
-            }
-            $table->foreignId('role_id')->after('password')->constrained('roles')->restrictOnDelete();
-        });
+            });
+        }
+
+        if (!Schema::hasColumn('users', 'role_id')) {
+            Schema::table('users', function (Blueprint $table) {
+                $table->foreignId('role_id')
+                    ->nullable()
+                    ->constrained('roles')
+                    ->restrictOnDelete();
+            });
+        }
     }
 
     public function down(): void
@@ -21,7 +29,6 @@ return new class extends Migration
         Schema::table('users', function (Blueprint $table) {
             $table->dropForeign(['role_id']);
             $table->dropColumn('role_id');
-            $table->string('role')->default('ormawa');
         });
     }
 };

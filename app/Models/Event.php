@@ -109,13 +109,16 @@ class Event extends Model
      * Scope: Event yang aktif dipublikasikan ke katalog publik mahasiswa (Guest).
      */
     public function scopePublished(Builder $query): Builder
-    {
-        return $query->where('status_publikasi', 'published')
-                     ->where('status_approval', 'approved');
-     * Relasi Header-Detail (T1): Satu Event memiliki banyak sesi rundown acara.
-     */
-    public function rundowns(): HasMany
-    {
-        return $this->hasMany(EventRundown::class, 'event_id');
-    }
+{
+    return $query->where('status_publikasi', 'published')
+                 ->where('status_approval', 'approved');
+}
+
+/**
+ * Relasi Header-Detail (T1): Satu Event memiliki banyak sesi rundown acara.
+ */
+public function rundowns(): HasMany
+{
+    return $this->hasMany(EventRundown::class, 'event_id');
+}
 }
