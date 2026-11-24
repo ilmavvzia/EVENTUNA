@@ -36,38 +36,68 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
-            'password'          => 'hashed',
+            'password' => 'hashed',
         ];
     }
 
-    public function role(): BelongsTo
+    /**
+     * Relasi User dengan Role.
+     */
+    public function userRole(): BelongsTo
     {
         return $this->belongsTo(Role::class, 'role_id');
     }
 
     /**
-     * Helper hasRole() untuk verifikasi otorisasi RBAC (Role-Based Access Control).
-     * Menerima string tunggal atau array nama role.
+     * Memeriksa role pengguna.
+     * Mendukung satu role atau beberapa role.
      */
     public function hasRole(string|array $roleName): bool
     {
+        $currentRole = $this->userRole?->name;
+
         if (is_array($roleName)) {
-            return in_array($this->role?->name, $roleName, true);
+            return in_array($currentRole, $roleName, true);
         }
 
-        return $this->role?->name === $roleName;
+        return $currentRole === $roleName;
     }
 
+    /**
+     * Memeriksa apakah pengguna adalah Admin.
+     */
+    public function isAdmin(): bool
+    {
+        return $this->hasRole('admin');
+    }
+
+    /**
+     * Memeriksa apakah pengguna adalah Ormawa.
+     */
+    public function isOrmawa(): bool
+    {
+        return $this->hasRole('ormawa');
+    }
+
+    /**
+     * Relasi User dengan Fakultas.
+     */
     public function fakultas(): BelongsTo
     {
         return $this->belongsTo(MasterFakultas::class, 'fakultas_id');
     }
 
+    /**
+     * Relasi User dengan Jenis Ormawa.
+     */
     public function jenisOrmawa(): BelongsTo
     {
         return $this->belongsTo(MasterJenisOrmawa::class, 'jenis_ormawa_id');
     }
 
+    /**
+     * Relasi User dengan Event.
+     */
     public function events(): HasMany
     {
         return $this->hasMany(Event::class, 'user_id');
